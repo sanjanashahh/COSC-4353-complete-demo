@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinical Event Management Form</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+    /* Define custom CSS variables for colors */
+    :root{
+        --acent-color: #146d90;
+        --base-color: white;
+        --text-color: #2E2B41;
+        --input-color: #F3F0FF;
+    }
+
+    /* Reset default styles for all elements */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .event-entry {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: var(--input-color); /* Keep background color as is */
+    border-radius: 8px;
+    color: #333333; /* Use a dark gray for better visibility */
+    font-weight: 600; /* Increase font weight for better visibility */
+    font-size: 16px;  /* Make the font size larger for readability */
+    line-height: 1.5; /* Increase line height for better text spacing */
+     }
+
+    #eventList {
+    text-align: right; /* Adjust alignment as needed */
+     }
+
+
+    /* Set base styles for HTML */
+    html{
+        font-family: Poppins, Segoe UI, sans-serif;
+        font-size: 12pt;
+        color: var(--input-color);
+    }
+
+    /* Style the body element */
+    body{
+        min-height: 100vh;
+        margin-left: 50px;
+        background-image: url('./medical.jpg');
+        background-size: cover;
+        background-position: right;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Style the main wrapper */
+    .wrapper{
+        box-sizing: border-box;
+        width: min(500px, 100%);
+        max-width: 100%;
+        padding: 10px;
+        border-radius: 0 20px 20px 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Style the main heading */
+    h1{
+        font-size: 2rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        margin-bottom: 20px;
+    }
+
+    /* Style the form */
+    form{
+        width: 100%;
+        margin-top: 0;
+        margin-bottom: 50px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* Style form divs */
+    form > div{
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    /* Style form labels */
+    form label{
+        flex-shrink: 0;
+        height: 70px;
+        width: 60px;
+        background-color: var(--acent-color);
+        fill: var(--base-color);
+        color: var(--base-color);
+        border-radius: 10px 0 0 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    /* Specific height adjustment for Event Description and Location labels */
+    .form-group:has(#eventDescription) label, 
+    .form-group:has(#eventLocation) label {
+        height: 90px; /* Custom height for Event Description and Location */
+    }
+
+    /* Style form inputs, selects, and textareas */
+    form input, form select, form textarea{
+        box-sizing: border-box;
+        flex-grow: 1;
+        min-width: 0;
+        height: 70px;
+        padding: 1em;
+        font: inherit;
+        font-size: 0.9rem;
+        border-radius: 0 10px 10px 0;
+        border: 2px solid var(--input-color);
+        border-left: none;
+        background-color: var(--input-color);
+        transition: 150ms ease;
+        outline: none;
+    }
+
+
+    /* Style the input wrapper */
+    form .input-wrapper {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    /* Style the input container */
+    form .input-container {
+        flex-grow: 1;
+        position: relative;
+    }
+
+    /* Style the character limit display */
+    form .char-limit {
+        font-size: 0.9rem;
+        color: var(--text-color);
+        margin-left: 10px;
+        align-self: center;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    /* Style hover states for inputs, selects, and textareas */
+    form input:hover, form select:hover, form textarea:hover{
+        border-color: var(--acent-color);
+    }
+
+    /* Style focus states for inputs, selects, and textareas */
+    form input:focus, form select:focus, form textarea:focus{
+        outline: none;
+        border-color: var(--text-color);
+    }
+
+    /* Style labels when their associated input is focused */
+    div:has(input:focus) > label, div:has(select:focus) > label, div:has(textarea:focus) > label{
+        background-color: var(--text-color);
+    }
+
+    /* Style placeholders */
+    form input::placeholder, form select::placeholder, form textarea::placeholder{
+        color: var(--text-color);
+    }
+
+    /* Style textareas specifically */
+    form textarea {
+        height: 90px;
+        resize: none;
+    }
+
+    /* Style paragraphs */
+    p{
+        width: 100%;
+        text-align: right;
+        margin-top: 0px;
+        color: #737373;
+    }
+
+    /* Style form buttons */
+    form button{
+        margin-top: 10px;
+        border: none;
+        border-radius: 1000px;
+        padding: .85em 4em;
+        background-color: var(--acent-color);
+        color: var(--base-color);
+        font: inherit;
+        font-weight: 600;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: 150ms ease;
+    }
+
+    /* Style button hover state */
+    form button:hover {
+        background-color: var(--text-color);
+    }
+
+    /* Style button focus state */
+    form button:focus{
+        outline: none;
+        border-color: var(--text-color);
+    }
+
+    /* Style links */
+    a{
+        text-decoration: none;
+        color: var(--acent-color);
+    }
+
+    /* Style link hover state */
+    a:hover{
+        text-decoration: underline;
+    }
+
+    /* Remove default appearance for select elements */
+    select, .custom-select {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+    }
+
+    /* Style the urgency select dropdown */
+    .form-group:has(#urgency) {
+        position: relative;
+    }
+
+    .form-group:has(#urgency)::after {
+        content: "\25BC";
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+        pointer-events: none;
+        color: var(--text-color);
+    }
+
+    /* Style the custom multi-select dropdown */
+    .custom-select {
+        position: relative;
+        flex-grow: 1;
+    }
+
+    .select-selected {
+        background-color: var(--input-color);
+        padding: 1em;
+        border-radius: 0 10px 10px 0;
+        cursor: pointer;
+        height: 70px;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        color: var(--text-color);
+    }
+
+    .select-selected:after {
+        content: "\25BC";
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+    }
+
+    .select-selected.select-arrow-active:after {
+        content: "\25B2";
+    }
+
+    .select-items {
+        position: absolute;
+        background-color: var(--text-color);
+        top: 100%;
+        left: 0;
+        right: 0;
+        z-index: 99;
+        max-height: 200px;
+        overflow-y: auto;
+        border-radius: 0 0 10px 10px;
+    }
+
+    .select-hide {
+        display: none;
+    }
+
+    .select-items div {
+        padding: 10px;
+        cursor: pointer;
+        color: var(--base-color);
+    }
+
+    .select-items div:hover, .select-items div.selected {
+        background-color: var(--acent-color);
+        color: var(--base-color);
+    }
+</style>
+
+<script>
+
+    // JavaScript code to handle character counting for event name and description
+    document.addEventListener('DOMContentLoaded', function() {
+        const eventNameInput = document.getElementById('eventName');
+        const eventDescriptionTextarea = document.getElementById('eventDescription');
+        const charCountDisplay = document.getElementById('charCount');
+
+        // Update character count for event name input
+        eventNameInput.addEventListener('input', function() {
+            const charCount = eventNameInput.value.length;
+            charCountDisplay.textContent = `${charCount}/100 characters`;
+        });
+
+        // Update character count for event description textarea
+        eventDescriptionTextarea.addEventListener('input', function() {
+            const charCount = eventDescriptionTextarea.value.length;
+            charCountDisplay.textContent = `${charCount}/500 characters`;
+        });
+    });
+
+    
+
+    //for multiselect droudown
+    document.addEventListener('DOMContentLoaded', function() {
+    const customSelect = document.querySelector(".custom-select");
+    const selectSelected = customSelect.querySelector(".select-selected");
+    const selectItems = customSelect.querySelector(".select-items");
+    const hiddenInput = document.getElementById("skills");
+    const selectedSkills = [];
+
+    selectSelected.addEventListener("click", function(e) {
+        e.stopPropagation();
+        toggleDropdown();
+    });
+
+    selectItems.querySelectorAll("div").forEach(item => {
+        item.addEventListener("click", function(e) {
+            e.stopPropagation();
+            toggleItem(this);
+        });
+    });
+
+    function toggleDropdown() {
+        selectSelected.classList.toggle("select-arrow-active");
+        selectItems.classList.toggle("select-hide");
+    }
+
+    function toggleItem(item) {
+        item.classList.toggle("selected");
+        const value = item.getAttribute("data-value");
+        const index = selectedSkills.indexOf(value);
+
+        if (index > -1) {
+            selectedSkills.splice(index, 1);
+        } else {
+            selectedSkills.push(value);
+        }
+
+        updateSelectedText();
+        hiddenInput.value = selectedSkills.join(",");
+    }
+
+    function updateSelectedText() {
+        selectSelected.textContent = selectedSkills.length === 0 ? "Select Skills" : selectedSkills.join(", ");
+    }
+
+    document.addEventListener("click", function() {
+        selectSelected.classList.remove("select-arrow-active");
+        selectItems.classList.add("select-hide");
+    });
+
+});
+
+ // Form submission handling
+ document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const eventList = document.createElement('div');
+    document.body.appendChild(eventList);
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        let formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        fetch('http://localhost:3000/api/submit-form', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+        .then(response => response.json())
+        .then(result => {
+            const eventName = result.event?.eventName || '';
+            const eventDateRaw = result.event?.eventDate || '';
+            const eventDescription = result.event?.eventDescription || '';
+            const eventLocation = result.event?.eventLocation || '';
+            const skillsRaw = result.event?.skills || '';
+
+            // Format the date to YYYY-MM-DD
+            const eventDate = eventDateRaw ? new Date(eventDateRaw).toISOString().split('T')[0] : '';
+
+            // Create container for event details
+            const eventContainer = document.createElement('div');
+            eventContainer.style.border = '3px solid #ddd';
+            eventContainer.style.padding = '10px';
+            eventContainer.style.margin = '10px 0';
+
+            // Append each event detail
+            if (eventName) {
+                const eventNameElement = document.createElement('div');
+                eventNameElement.textContent = `Event Name: ${eventName}`;
+                eventContainer.appendChild(eventNameElement);
+            }
+            if (eventDate) {
+                const eventDateElement = document.createElement('div');
+                eventDateElement.textContent = `Event Date: ${eventDate}`;
+                eventContainer.appendChild(eventDateElement);
+            }
+            if (eventDescription) {
+                const eventDescriptionElement = document.createElement('div');
+                eventDescriptionElement.textContent = `Description: ${eventDescription}`;
+                eventContainer.appendChild(eventDescriptionElement);
+            }
+            if (eventLocation) {
+                const eventLocationElement = document.createElement('div');
+                eventLocationElement.textContent = `Location: ${eventLocation}`;
+                eventContainer.appendChild(eventLocationElement);
+            }
+            if (skillsRaw) {
+                const skillsElement = document.createElement('div');
+                skillsElement.textContent = 'Skills Required:';
+                
+                const skillsList = document.createElement('ul'); // Create a list for skills
+                const skillsArray = skillsRaw.split(','); // Split skills by comma
+                skillsArray.forEach(skill => {
+                    const skillItem = document.createElement('li');
+                    skillItem.textContent = skill.trim();
+                    skillsList.appendChild(skillItem);
+                });
+                skillsElement.appendChild(skillsList);
+                eventContainer.appendChild(skillsElement);
+            }
+
+            // Append the eventContainer to the main event list
+            eventList.appendChild(eventContainer);
+
+            form.reset(); // Reset form after submission
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        });
+    });
+});
+
+</script>
+
+</head>
+<body>
+    <a href="dashboard.html" style="position: absolute; top: 20px; left: 20px; text-decoration: none; color: #146d90; font-size: 1.2rem;">Back to Dashboard</a>
+    <div class="wrapper">
+        <h1>Create New Program</h1>
+        <form id="eventForm" action="/api/submit-form" method="POST">
+            <!-- Event Name -->
+            <div class="form-group">
+                <label for="eventName">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M580-240q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Z"/></svg>
+                </label>
+                <input type="text" id="eventName" name="eventName" maxlength="100" placeholder="Enter the program name" required>
+            </div>
+            <p id="charCount" style="color: #f1f1f1;">0/100 characters</p>
+            
+            <!-- Event Description -->
+            <div class="form-group">
+                <label for="eventDescription">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M280-400v-80h400v80H280Zm0 160v-80h280v80H280ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Z"/></svg>
+                </label>
+                <textarea id="eventDescription" name="eventDescription" placeholder="Describe the program" required></textarea>
+            </div>
+
+            <!-- Location -->
+            <div class="form-group">
+                <label for="eventLocation">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-480q33 0 56.5-23.5T560-560q0-33-23.5-56.5T480-640q-33 0-56.5 23.5T400-560q0 33 23.5 56.5T480-480Zm0 400Q319-217 239.5-334.5T160-552q0-150 96.5-239T480-880q127 0 223.5 89T800-552q0 100-79.5 217.5T480-80Z"/></svg>
+                </label>
+                <textarea id="eventLocation" name="eventLocation" placeholder="Enter the program location" required></textarea>
+            </div>
+
+            <!-- Required Skills -->
+            <div class="form-group">
+                <label for="skills">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M222-200 80-342l56-56 85 85 170-170 56 57-225 226Zm0-320L80-662l56-56 85 85 170-170 56 57-225 226Zm298 240v-80h360v80H520Zm0-320v-80h360v80H520Z"/></svg>
+                </label>
+                <div class="custom-select">
+                    <div class="select-selected">Select Skills</div>
+                    <div class="select-items select-hide">
+                        <div data-value="Attention to Detail">Attention to Detail</div>
+                        <div data-value="Cardiac Knowledge">Cardiac Knowledge</div>
+                        <div data-value="Technological Proficiency">Technological Proficiency</div>
+                        <div data-value="Child Empathy">Child Empathy</div>
+                        <div data-value="Calm Under Pressure">Calm Under Pressure</div>
+                    </div>
+                </div>
+                <input type="hidden" id="skills" name="skills" required>
+            </div>
+
+            <!-- Urgency -->
+            <div class="form-group">
+                <label for="urgency">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-80q-75 0-140.5-28.5t-114-77q-48.5-48.5-77-114T120-440q0-75 28.5-140.5t77-114q48.5-48.5 114-77T480-800q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-440q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-80Zm0-40q55 0 105-21t90.5-57.5q38-38 57.5-90.5T680-440q0-55-21-105t-57.5-90.5q-38-38-90.5-57.5T480-800q-55 0-105 21t-90.5 57.5q-38 38-57.5 90.5T280-440q0 55 21 105t57.5 90.5q38 38 90.5 57.5T480-40Z"/></svg>
+                </label>
+                <select id="urgency" name="urgency" required>
+                    <option value="" disabled selected>Select Urgency</option>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                </select>
+            </div>
+
+            <!-- Event Date -->
+            <div class="form-group">
+                <label for="eventDate">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
+                        <path d="M480-400q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm-160 0q-17 0-28.5-11.5T280-440q0-17 11.5-28.5T320-480q17 0 28.5 11.5T360-440q0 17-11.5 28.5T320-400Zm320 0q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400ZM480-240q-17 0-28.5-11.5T440-280q0-17 11.5-28.5T480-320q17 0 28.5 11.5T520-280q0 17-11.5 28.5T480-240Zm-160 0q-17 0-28.5-11.5T280-280q0-17 11.5-28.5T320-320q17 0 28.5 11.5T360-280q0 17-11.5 28.5T320-240Zm320 0q-17 0-28.5-11.5T600-280q0-17 11.5-28.5T640-320q17 0 28.5 11.5T680-280q0 17-11.5 28.5T640-240ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Z"/>
+                    </svg>
+                </label>
+                <input type="date" id="eventDate" name="eventDate" required>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-group">
+                <button type="submit" style="background-color: var(--acent-color); color: var(--base-color); border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Submit</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
