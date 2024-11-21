@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit My Profile</title>
+    <link rel="icon" type="image/x-icon" href="VolunteerProfile-removebg-preview.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap" rel="stylesheet">
+    <style>
+        body,
+        html {
+            height: 100%;
+            /*background-color: #F3F0FF;  Light background for contrast */
+            font-family: "Poppins", sans-serif; /* Unified font */
+            background-image: url('./medical.jpg');
+            background-size: cover; /* Cover the entire viewport */
+            background-position: center; /* Center the image */
+        }
+        h1 {
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Centered title */
+            color: whitesmoke; /* Changed title color */
+            font-size: 60px; /* Adjusted font size */
+            margin: 20px 0; /* Spacing above and below */
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        .bg_Form {
+            background-color: rgba(20, 20, 20, 0.8); /* Darker background for the form */
+            color: white;
+            font-weight: bold;
+            display: flex;
+            flex-direction: column;
+            padding: 30px; /* Increased padding for better spacing */
+            border-radius: 15px; /* More rounded corners */
+            margin: auto;
+            width: 90%; /* Responsive width */
+            max-width: 800px; /* Max width for larger screens */
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column; /* Stacked layout */
+            margin-bottom: 15px; /* Space between form fields */
+        }
+
+        .container label {
+            font-size: 18px; /* Label font size */
+            margin-bottom: 5px; /* Space below label */
+        }
+
+        .container input,
+        .container select,
+        .container textarea {
+            padding: 10px; /* Increased padding for inputs */
+            font-size: 16px;
+            border: none; /* Remove border */
+            border-radius: 5px; /* Rounded corners */
+            background-color: #fff; /* White background for inputs */
+            color: #333; /* Dark text for readability */
+            transition: border-color 0.3s; /* Smooth transition for focus */
+        }
+
+        .container input:focus,
+        .container select:focus,
+        .container textarea:focus {
+            outline: none; /* Remove outline */
+            border: 2px solid #146d90; /* Highlight border on focus */
+        }
+
+        button {
+            padding: 12px;
+            background-color: #146d90; /* Button color */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s; /* Added transform */
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #0056b3; /* Darker shade on hover */
+            transform: scale(1.05); /* Slightly enlarge button */
+        }
+
+        p {
+            margin-left: 10px;
+            color: #ccc; /* Light color for info text */
+            font-size: 14px; /* Adjusted font size for better readability */
+        }
+    </style>
+</head>
+
+<body>
+<a href="dashboard.html" style="position: absolute; top: 20px; left: 20px; text-decoration: none; color: #146d90; font-size: 1.2rem;">Back to Dashboard</a>
+<h1>VOLUNTEER PROFILE</h1>
+<div class="bg_Form">
+    <!-- Update the form action and method -->
+    <form action="/api/profileData" method="POST">
+        <fieldset>
+            <legend>Edit Your Profile</legend>
+            <div class="container">
+                <label for="Fname">Full Name:</label>
+                <input type="text" id="Fname" name="fullName" placeholder="Enter name" maxlength="50" required>
+                <p id="result_fn">0/50</p>
+            </div>
+            <div class="container">
+                <label for="Vaddress1">Address 1:</label>
+                <input type="text" id="Vaddress1" name="address1" placeholder="Enter address" maxlength="100" required>
+                <p id="result_ad1">0/100</p>
+            </div>
+            <div class="container">
+                <label for="Vaddress2">Address 2:</label>
+                <input type="text" id="Vaddress2" name="address2" maxlength="100">
+                <p id="result_ad2">0/100</p>
+            </div>
+            <div class="container">
+                <label for="Vcity">City:</label>
+                <input type="text" id="Vcity" name="city" placeholder="Enter city" maxlength="100" required>
+                <p id="result_city">0/100</p>
+            </div>
+            <div class="container">
+                <label for="state-select">State:</label>
+                <select name="state" id="state-select" size="1" required></select>
+            </div>
+            <div class="container">
+                <label for="Vzipcode">Zipcode:</label>
+                <input type="text" id="Vzipcode" name="zipcode" placeholder="Enter zipcode" pattern="^[a-zA-Z0-9]{5,9}$" maxlength="9" required>
+            </div>
+            <div class="container">
+                <label for="Vskills">Skills:</label>
+                <select multiple id="Vskills" name="skills" size="6">
+                    <option value='Attention to Detail' selected>Attention to Detail</option>
+                    <option value='Cardiac Knowledge'>Cardiac Knowledge</option>
+                    <option value='Technological Proficiency'>Technological Proficiency</option>
+                    <option value='Child Empathy'>Child Empathy</option>
+                    <option value='Calm Under Pressure'>Calm Under Pressure</option>
+                </select>
+                <p>Hold down 'CTRL' key on Windows/ 'COMMAND' key on Mac</p>
+            </div>
+            <div class="container">
+                <label for="Vpreferences">Preferences:</label>
+                <select multiple id="Vpreferences" name="preferences" size="6">
+                    <option value='Neurology' selected>Neurology</option>
+                    <option value='Cardiology'>Cardiology</option>
+                    <option value='Radiology'>Radiology</option>
+                    <option value='Pediatrics'>Pediatrics</option>
+                    <option value='Surgeon'>Surgeon</option>
+                </select>
+                <p>Hold down 'CTRL' key on Windows/ 'COMMAND' key on Mac</p>
+            </div>
+            <div class="container">
+                <label for="date-picker">Availability:</label>
+                <div id="date-picker"></div>
+                <p id="selected-dates">Selected Dates:</p>
+            </div>
+            <div class="container">
+                <label for="Vsummary">A Little About Me:</label>
+                <textarea id="Vsummary" name="summary" rows="8" placeholder="What you are working on currently, interests, and achievements.."></textarea>
+                <p id="result_textbox">0/300</p>
+            </div>
+            <div class="container">
+                <button type="submit">Save Changes</button>
+            </div>
+        </fieldset>
+    </form>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const states = [
+            "AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA",
+            "ID", "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS",
+            "MT", "NC", "ND", "NE", "NH", "NJ", "NM", "NV", "NY", "OH", "OK", "OR", "PA",
+            "RI", "SC", "SD", "TN", "TX", "UT", "VA", "VT", "WA", "WI", "WV", "WY"
+        ];
+
+        // Populate state options
+        const selectElement = document.getElementById('state-select');
+        states.forEach(state => {
+            const option = new Option(state, state);
+            selectElement.appendChild(option);
+        });
+
+        // Function to handle text input limits
+        const addCharacterLimit = (inputElement, resultElement, limit) => {
+            resultElement.textContent = `0/${limit}`;
+            inputElement.addEventListener("input", function () {
+                const textLen = inputElement.value.length;
+                resultElement.textContent = `${textLen}/${limit}`;
+            });
+        };
+
+        // Apply character limits
+        addCharacterLimit(document.getElementById("Fname"), document.getElementById("result_fn"), 50);
+        addCharacterLimit(document.getElementById("Vaddress1"), document.getElementById("result_ad1"), 100);
+        addCharacterLimit(document.getElementById("Vaddress2"), document.getElementById("result_ad2"), 100);
+        addCharacterLimit(document.getElementById("Vcity"), document.getElementById("result_city"), 100);
+        addCharacterLimit(document.getElementById("Vsummary"), document.getElementById("result_textbox"), 300);
+
+        // Date picker - generate dates +5, +10, +15, +20 days from today
+        const datePicker = document.getElementById('date-picker');
+        const selectedDatesDisplay = document.getElementById('selected-dates');
+        const intervals = [5, 10, 15, 20];
+
+        intervals.forEach(days => {
+            const date = new Date();
+            date.setDate(date.getDate() + days);
+            const dateString = date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+
+            const label = document.createElement("label");
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.name = "availability";
+            checkbox.value = dateString;
+            
+            label.appendChild(checkbox);
+            label.append(` ${date.toLocaleDateString()}`);
+            datePicker.appendChild(label);
+            datePicker.appendChild(document.createElement("br"));
+        });
+
+
+        // Update selected dates display
+        datePicker.addEventListener('change', () => {
+            const selectedDates = Array.from(datePicker.querySelectorAll('input[type="checkbox"]:checked'))
+                .map(input => input.value);
+            selectedDatesDisplay.textContent = 'Selected Dates: ' + selectedDates.join(', ');
+        });
+    });
+
+    // Form submission handling
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('form');
+        const profileDisplay = document.createElement('div'); // Create a div to hold profile information
+        document.body.appendChild(profileDisplay); // Append the profile display to the body
+
+        // Retrieve the user name from localStorage
+        const username = sessionStorage.getItem('username');
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent default form submission
+
+            let formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            // Include user name from localStorage as a separate field
+            data.username = username;
+
+            // For multiple selections
+            data.skills = Array.from(document.querySelectorAll("#Vskills option:checked")).map(option => option.value);
+            data.preferences = Array.from(document.querySelectorAll("#Vpreferences option:checked")).map(option => option.value);
+            data.availability = Array.from(document.querySelectorAll("#date-picker input[type='checkbox']:checked")).map(input => {
+                const localDate = new Date(input.value);
+                localDate.setMinutes(localDate.getMinutes() - localDate.getTimezoneOffset());
+                return localDate.toISOString().split('T')[0];
+            });
+
+            fetch('http://localhost:3000/api/profileData', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(result => {
+               /* profileDisplay.innerHTML = `
+                    <h3>Profile Submitted:</h3>
+                    <p><strong>Full Name:</strong> ${result.fullName}</p>
+                    <p><strong>Address 1:</strong> ${result.address1}</p>
+                    <p><strong>Address 2:</strong> ${result.address2}</p>
+                    <p><strong>City:</strong> ${result.city}</p>
+                    <p><strong>State:</strong> ${result.state}</p>
+                    <p><strong>Zipcode:</strong> ${result.zipcode}</p>
+                    <p><strong>Skills:</strong> ${result.skills.join(', ')}</p>
+                    <p><strong>Preferences:</strong> ${result.preferences.join(', ')}</p>
+                    <p><strong>Availability:</strong> ${result.availability.join(', ')}</p>
+                    <p><strong>Summary:</strong> ${result.summary}</p>
+                `; */
+
+                form.reset(); // Reset form after submission
+                alert("Profile added successfully.")
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("Error: Unable to submit profile.");
+            });
+        });
+    });
+</script>
+</body>
+</html>
