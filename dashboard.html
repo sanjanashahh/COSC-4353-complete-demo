@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-image: url('medical.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .dashboard {
+            width: 500px;
+            padding: 30px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        a {
+            display: block;
+            margin: 10px 0;
+            text-decoration: none;
+            color: #2f53e0;
+            font-size: 18px;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #2f53e0;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .hidden{
+            display: none;
+
+        }
+
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <h2>Welcome, <span id="username"></span>!</h2>
+        <p>Your role: <span id="role"></span></p>
+
+        <div id="admin-links" class="hidden">
+            <a href="EMF.html">Event Management</a>
+            <a href="volunteermatch.html">Volunteer Matching</a>
+            <a href="reportmodule.html">Volunteer Report</a>
+        </div>
+
+        <div id="volunteer-links" class="hidden">
+            <a href="VPM.html"> Add Profile </a> 
+            <a href="notify.html">Notifications</a>
+            <a href="volunteer_history.html">Volunteering History</a>
+        </div>
+
+        <button id="logout-btn">Logout</button>
+    </div>
+
+    <script>
+        // Display username and role
+        const username = sessionStorage.getItem('username');
+        const role = sessionStorage.getItem('role');
+        document.getElementById('username').textContent = username;
+        document.getElementById('role').textContent = role;
+
+        // Show links based on user role
+        if (role === 'admin') {
+            document.getElementById('admin-links').classList.remove('hidden');
+        } else if (role === 'volunteer') {
+            document.getElementById('volunteer-links').classList.remove('hidden');
+        }
+
+        // Logout functionality
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            sessionStorage.clear();  // Clear session data
+            window.location.href = 'Login and User Registration Page.html';  // Redirect to login
+        });
+    </script>
+</body>
+</html>
