@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volunteer Report Generation</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('medical.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            margin-top: 200px;
+        }
+        h1 {
+            text-align: center;
+            color:darkslategrey;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+            background-color: aliceblue;
+            padding: 30px;
+            border-radius: 16px;
+            position: relative;
+            
+        }
+        .backtodashboard{
+            position:absolute;
+            top: 10px;
+            right: 13px;
+            text-decoration: none;
+            color: #2f3131b7;
+            font-size: 1.0rem;
+            transition: color 0.3s;
+        }
+
+        .backtodashboard:hover {
+            color: #000000da;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #0367fd;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .status {
+            margin-top: 20px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <a class="backtodashboard" href="dashboard.html">← Back to dashboard </a>
+        <h1>Volunteer Report</h1>
+
+        <div class="buttons">
+            <button class="button" id="generateCsvBtn">Generate CSV Report</button>
+            <button class="button" id="generatePdfBtn">Generate PDF Report</button>
+        </div>
+
+        <div class="status" id="status"></div>
+    </div>
+
+    <script>
+        // Get the buttons and status div
+        const generateCsvBtn = document.getElementById('generateCsvBtn');
+        const generatePdfBtn = document.getElementById('generatePdfBtn');
+        const statusDiv = document.getElementById('status');
+
+        // Handle CSV report generation
+        generateCsvBtn.addEventListener('click', async () => {
+            statusDiv.textContent = 'Generating CSV report...';
+            try {
+                const response = await fetch('http://localhost:3000/api/generateCsvReport', {
+                    method: 'GET',
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    statusDiv.textContent = 'CSV report generated successfully!';
+                    //statusDiv.innerHTML += `<a href="${data.downloadLinks.csv}" target="_blank">Download CSV</a>`;
+                } else {
+                    statusDiv.textContent = 'Failed to generate CSV report.';
+                }
+            } catch (error) {
+                statusDiv.textContent = 'Error generating CSV report.';
+                console.error(error);
+            }
+        });
+
+        // Handle PDF report generation
+        generatePdfBtn.addEventListener('click', async () => {
+            statusDiv.textContent = 'Generating PDF report...';
+            try {
+                const response = await fetch('http://localhost:3000/api/generatePdfReport', {
+                    method: 'GET',
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    statusDiv.textContent = 'PDF report generated successfully!';
+                    //statusDiv.innerHTML += `<a href="${data.downloadLinks.pdf}" target="_blank">Download PDF</a>`;
+                } else {
+                    statusDiv.textContent = 'Failed to generate PDF report.';
+                }
+            } catch (error) {
+                statusDiv.textContent = 'Error generating PDF report.';
+                console.error(error);
+            }
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volunteer History</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('medical.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        #volunteer-history {
+            position: relative;
+            max-width: 90%;
+            margin: 50px auto;
+            background-color: rgba(255, 255, 255, 0.9); 
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        #volunteer-history h2 {
+            font-family: 'Times New Roman';
+            font-weight: 200;
+            font-size: 40px;
+            margin-bottom: 10px;
+            margin-top: 10px;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        thead th {
+            background-color: #005f87;
+            color: white;
+            font-size: 1.1rem;
+            padding: 12px 15px;
+        }
+
+        tbody td {
+            padding: 10px 15px;
+            font-size: 1rem;
+            color: #333;
+            border-bottom: 1px solid #ccc;
+        }
+
+        tbody tr:nth-child(odd) {
+            background-color: #f9f9f9;
+        }
+
+        tbody td:last-child {
+            text-align: center;
+            font-weight: bold;
+        }
+        #back-to-dashboard {
+            position:absolute;
+            top: 10px;
+            right: 13px;
+            text-decoration: none;
+            color: #2f3131b7;
+            font-size: 1.0rem;
+            transition: color 0.3s;
+            
+        }
+
+        #back-to-dashboard:hover {
+            color: #000000da;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="volunteer-history">
+        <a id="back-to-dashboard" href="dashboard.html">← Back to Dashboard</a>
+        <h2>Volunteer Participation History</h2>
+        <table id="history-table">
+            <thead>
+                <tr>
+                    <th>Event Name</th>
+                    <th>Event Date</th>
+                    <th>Location</th>
+                    <th>Skill</th>
+                    <th>Participation Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- The volunteer data will be inserted here dynamically -->
+            </tbody>
+        </table>
+    </div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const username = sessionStorage.getItem('username');
+            if (!username) {
+                alert('You are not logged in!');
+                window.location.href = 'Login and User Registration Page.html'; // Redirect if not logged in
+                return;
+            }
+
+            // Initial fetch to populate the table with username filter
+            fetchVolunteerHistory(username);
+
+            // Set interval to fetch and update volunteer history every 10 seconds
+            setInterval(() => fetchVolunteerHistory(username), 10000); // Fetches new data every 10 seconds
+        });
+
+        // Function to fetch and populate the volunteer history table
+        function fetchVolunteerHistory(username) {
+            const apiUrl = `http://localhost:3000/api/volunteer-history/${username}`;
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    populateVolunteerHistory(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching volunteer history:', error);
+                });
+        }
+
+            // Function to check and update status on page load
+            function checkAndUpdateHistoryStatus(volunteerData) {
+                const currentDate = new Date().toISOString().split('T')[0];;
+                volunteerData.forEach(volunteer => {
+                    const eventDate = new Date(volunteer.eventDate);
+                    if (currentDate > eventDate && volunteer.status === 'Pending') {
+                        // Update the status to 'Completed'
+                        fetch('http://localhost:3000/api/updateVolunteerHistory', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                username: volunteer.username,
+                                eventName: volunteer.eventName,
+                                status: 'Completed'
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => console.log('History status updated to Completed:', data))
+                        .catch(error => console.error('Error updating status:', error));
+                    }
+                });
+            }
+
+        // Function to populate the volunteer history table
+        function populateVolunteerHistory(volunteerData) {
+            const tableBody = document.querySelector('#history-table tbody');
+            
+            // Clear the existing table rows
+            tableBody.innerHTML = '';
+
+            // Check and update status before populating the table
+            checkAndUpdateHistoryStatus(volunteerData);
+
+            // Populate table with volunteer data
+            volunteerData.forEach(volunteer => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${volunteer.eventName}</td>
+                    <td>${volunteer.eventDate}</td>
+                    <td>${volunteer.location}</td>
+                    <td>${volunteer.skill}</td>
+                    <td>${volunteer.status}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+    </script>
+</body>
+</html>

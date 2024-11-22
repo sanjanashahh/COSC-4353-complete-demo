@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notification Page</title>
+    <style>
+        body {
+            font-family: Arial;
+            background-image: url(medical.jpg);
+            background-size: cover;
+            background-position: center; 
+            background-repeat: no-repeat; 
+            background-attachment: fixed;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        h2 {
+            font-family: 'Times New Roman';
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-align: left;
+            color: #333;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+
+        #back-to-dashboard {
+            position: static;
+            top: 1px;
+            left:850px;
+            text-decoration: none;
+            color: #2f3131b7;
+            font-size: 1.0rem;
+            transition: color 0.3s;
+        }
+
+        #back-to-dashboard:hover {
+            color: #000000da;
+        }
+
+        #notification-list{
+            list-style-type: none;
+            padding-left: 0px;
+            margin: 10px;
+        }
+
+        #notifications {
+            max-width: 75%;
+            margin: 20px auto;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .notification-item {
+            padding: 5px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .notification-assignment {
+            background-color: #ff236c;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .notification-reminder {
+            background-color: #e69d31;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .notification-update {
+            background-color: #03a8f4c2;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .notification-time {
+            font-size: 0.9rem;
+            color: #888;
+            white-space: nowrap;
+        }
+
+        .notification-content {
+            color: #555;
+            margin-top: 5px;
+            font-size: 1.1rem;
+            text-align: left;
+        }
+
+        .notification-item:hover {
+            background-color: #e0dfdf;
+        }
+
+        .alert-box {
+            position: fixed;
+            top: 20px;
+            right: 37%;
+            background-color: #b10202c7;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            animation: slideIn 0.5s;
+        }
+
+        .close-alert {
+            margin-left: 15px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="notifications">
+        <a id="back-to-dashboard" href="dashboard.html">← Back to Dashboard</a>
+        <h2>NOTIFICATIONS</h2>
+        <ul id="notification-list"></ul>
+    </div>
+
+    <script>
+        let latestNotificationTime = Date.now(); // Initially set to the current time
+
+        // Function to format time as "Just now", "1 min ago", etc.
+        function formatTime(timestamp) {
+            const now = Date.now();
+            const diffInSeconds = Math.floor((now - timestamp) / 1000);
+            const diffInMinutes = Math.floor(diffInSeconds / 60);
+            const diffInHours = Math.floor(diffInMinutes / 60);
+            
+            if (diffInSeconds < 60) {
+                return 'Just now';
+            } else if (diffInMinutes === 1) {
+                return '1 min ago';
+            } else if (diffInMinutes < 60) {
+                return `${diffInMinutes} min ago`;
+            } else if (diffInHours === 1) {
+                return '1 hour ago';
+            } else {
+                return `${diffInHours} hours ago`;
+            }
+        }
+
+        // Function to create a notification item for the list
+        function createNotificationItem(notification) {
+            const listItem = document.createElement('li');
+            listItem.className = 'notification-item';
+
+            // Create header
+            const header = document.createElement('div');
+            header.className = 'notification-header';
+
+            const typeDiv = document.createElement('div');
+            typeDiv.className = `notification-${notification.type.toLowerCase()}`;
+            typeDiv.textContent = notification.type;
+
+            const timeSpan = document.createElement('span');
+            timeSpan.className = 'notification-time';
+            timeSpan.textContent = formatTime(notification.time);  // Use formatted time
+
+            // Add header elements
+            header.appendChild(typeDiv);
+            header.appendChild(timeSpan);
+
+            // Create content
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'notification-content';
+            contentDiv.textContent = notification.content;
+
+            // Append header and content to the list item
+            listItem.appendChild(header);
+            listItem.appendChild(contentDiv);
+
+            return listItem;
+        }
+
+        // Function to show alert notification
+        function showAlert(notification) {
+            const alertBox = document.createElement('div');
+            alertBox.className = 'alert-box';
+            alertBox.innerHTML = `
+                <strong>${notification.type}:</strong> ${notification.content}
+                <span class="close-alert">&times;</span>
+            `;
+
+            // Add the alert to the top of the body
+            document.body.appendChild(alertBox);
+
+            // Automatically remove the alert after 5 seconds
+            setTimeout(() => {
+                alertBox.remove();
+            }, 5000);
+
+            // Close alert manually when "x" is clicked
+            alertBox.querySelector('.close-alert').addEventListener('click', () => {
+                alertBox.remove();
+            });
+        }
+
+        // Fetch notifications from the backend
+        async function fetchNotifications() {
+            const username = sessionStorage.getItem('username');
+            if (!username) {
+                console.error('No username found in sessionStorage');
+                return [];
+            }
+
+
+            try {
+                const response = await fetch('http://localhost:3000/api/notifications?username=${username}');
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error fetching notifications:', error);
+                return [];
+            }
+        }
+
+        // Render notifications using fetched data
+        async function renderNotifications() {
+            const notificationList = document.getElementById('notification-list');
+            const notifications = await fetchNotifications();
+
+            notificationList.innerHTML = ''; // Clear any existing notifications
+
+            notifications.forEach(notification => {
+                const listItem = createNotificationItem(notification);
+                notificationList.appendChild(listItem);
+                
+                // Check if the notification is new (timestamp greater than the latest tracked notification time)
+                if (notification.time > latestNotificationTime) {
+                    showAlert(notification);  // Show alert for new notification
+                }
+            });
+
+            // Update latestNotificationTime with the time of the most recent notification
+            if (notifications.length > 0) {
+                latestNotificationTime = Math.max(...notifications.map(n => n.time));
+            }
+        }
+
+        // Set up an interval to check for new notifications every min
+        setInterval(renderNotifications, 1);
+
+        document.addEventListener('DOMContentLoaded', renderNotifications);
+    </script>
+</body>
+</html>
