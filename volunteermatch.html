@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volunteer Matching</title>
+    <style>
+        :root {
+            --acent-color: #146d90;
+            --base-color: white;
+            --text-color: #2E2B41;
+            --input-color: #F3F0FF;
+        }
+
+        /* Set base styles for HTML */
+        html {
+            font-family: Poppins, Segoe UI, sans-serif;
+            font-size: 12pt;
+            color: var(--text-color);
+        }
+
+        /* Style the body element */
+        body {
+            background-image: url(medical.jpg);
+            background-size: cover;
+            background-position: right;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        /* Style the main heading */
+        h1 {
+            font-size: 2rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            color: var(--text-color);
+        }
+
+        h2 {
+            color: #146d90;
+            margin-bottom: 20px;
+        }
+
+        label[for="eventSelect"] {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #146d90;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+        
+        #eventSelect {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-top: 5px;
+            background-color: var(--input-color);
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        #volunteerList label {
+            font-size: 1.15rem; /* Increase font size for volunteer names */
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        #volunteerList input[type="checkbox"] {
+            width: 20px; /* Set width for larger checkbox */
+            height: 20px; /* Set height for larger checkbox */
+            margin-right: 10px; /* Add space between checkbox and name */
+        }
+        button {
+            background-color: #146d90;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 15px; /* Space between the last input and the button */
+        }
+
+        button:hover {
+            background-color: #125a80;
+        }
+        
+        #back-to-dashboard {
+            position: static;
+            top: 153px;
+            right: 375px;
+            text-decoration: none;
+            color: #2f3131b7;
+            font-size: 1.0rem;
+            transition: color 0.3s;
+        }
+
+        #back-to-dashboard:hover {
+            color: #000000da;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <a id="back-to-dashboard" href="dashboard.html">← Back to Dashboard</a>
+        <h1>Volunteer Matching</h1>
+        <form id="matchingForm">
+            <label for="eventSelect">Select Event:</label>
+            <select id="eventSelect" onchange="loadMatchingVolunteers()">
+                <option value="">Choose an event</option>
+                <!-- Options will be dynamically loaded -->
+            </select>
+
+            <div id="volunteerList" style="margin-top: 20px;">
+                <h2>Available Volunteers:</h2>
+                <!-- Volunteer checkboxes will be dynamically loaded -->
+            </div>
+
+            <button type="button" onclick="submitSelection()">Confirm Selection</button>
+        </form>
+    </div>
+
+    <script>
+        // Load events from the server when the page loads
+        document.addEventListener("DOMContentLoaded", loadEvents);
+
+        function loadEvents() {
+            fetch('http://localhost:3000/api/events')
+                .then(response => response.json())
+                .then(events => {
+                    const eventSelect = document.getElementById('eventSelect');
+                    events.forEach(event => {
+                        const option = document.createElement('option');
+                        option.value = event.eventName;
+                        option.textContent = event.eventName;
+
+                        // Store additional attributes on the <option> element
+                        option.dataset.eventDate = new Date(event.eventDate).toISOString().split('T')[0];
+                        option.dataset.location = event.eventLocation;
+                        option.dataset.skills = event.skills;
+                        eventSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error loading events:', error));
+        }
+
+        function loadMatchingVolunteers() {
+            const eventName = document.getElementById('eventSelect').value;
+            if (!eventName) {
+                volunteerList.innerHTML = "<h2>Available Volunteers:</h2>"; // Show heading if no event selected
+                return;
+            }
+
+            fetch(`http://localhost:3000/api/volunteers?event=${eventName}`)
+                .then(response => response.json())
+                .then(volunteers => {
+                    const volunteerList = document.getElementById('volunteerList');
+                    volunteerList.innerHTML = '<h2>Available Volunteers:</h2>'; // Clear previous list
+
+                    volunteers.forEach(volunteer => {
+                        const label = document.createElement('label');
+                        const checkbox = document.createElement('input');
+
+                        checkbox.type = 'checkbox';
+                        checkbox.value = volunteer.fullName;
+                        checkbox.dataset.username = volunteer.username;
+
+                        label.appendChild(checkbox);
+                        label.appendChild(document.createTextNode(` ${volunteer.fullName}`));
+                        volunteerList.appendChild(label);
+                        volunteerList.appendChild(document.createElement('br'));
+                    });
+                })
+                .catch(error => console.error('Error loading volunteers:', error));
+        }
+
+        function submitSelection() {
+            const selectedVolunteers = Array.from(
+                document.querySelectorAll('#volunteerList input[type="checkbox"]:checked')
+            ).map(checkbox => checkbox.dataset.username);
+
+            if (!selectedVolunteers.length) {
+                alert("Please select at least one volunteer.");
+                return;
+            }
+
+             // Get the selected event and extract the dynamic data
+            const eventSelect = document.getElementById('eventSelect');
+            const selectedEvent = eventSelect.value;
+            const eventDate = eventSelect.options[eventSelect.selectedIndex].dataset.eventDate;
+            const eventLocation = eventSelect.options[eventSelect.selectedIndex].dataset.location;
+            const eventSkills = eventSelect.options[eventSelect.selectedIndex].dataset.skills;
+
+            fetch('http://localhost:3000/api/confirmSelection', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ event: selectedEvent, volunteers: selectedVolunteers })
+            })
+            .then(response => response.json())
+            .then(async data => {
+            
+                alert(data.message);
+
+                for (const username of selectedVolunteers) {
+                await fetch('http://localhost:3000/api/updateVolunteerHistory', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username,
+                        eventName: selectedEvent,
+                        eventDate,
+                        location: eventLocation, 
+                        skill: eventSkills,
+                        status: 'Pending'
+                })
+            })
+                .then(response => response.json())
+                .then(data => console.log('History updated:', data))
+                    .catch(error => console.error('Error updating history:', error));
+            }
+
+        
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
